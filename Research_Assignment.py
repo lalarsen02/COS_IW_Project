@@ -3,24 +3,24 @@
 # -------------------------------------------------
 
 import matplotlib.pyplot as plt
+import numpy
 from pathlib import Path
 from scipy import signal
 from scipy.io import wavfile
-from playsound import playsound
+import pyaudio
 
 # -------------------------------------------------
 
-playsound("COS_IW_Project\Samples\Cymbals\CYCdh_Crash-01.wav")
+# from playsound import playsound
 
-# sample_rate, samples = wavfile.read(wav_file)
-# frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate)
-# print(times.shape, frequencies.shape, spectrogram.shape)
+# playsound('CYCdh_Crash-01.wav')
 
-# plt.pcolormesh(times, frequencies, spectrogram, shading='flat', 
-#                cmap='viridis', 
-#                vmin=spectrogram.min(), vmax=spectrogram.max(), 
-#                extent=(times[0], times[-1], frequencies[0], frequencies[-1]))
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
-# plt.colorbar(label='Power [dB]')
-# plt.show()
+sample_rate, samples = wavfile.read('Overhead Sample 1.wav')
+frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate)
+print(times.shape, frequencies.shape, spectrogram.shape)
+
+plt.pcolormesh(frequencies, times, numpy.transpose(spectrogram))
+plt.ylabel('Frequency [Hz]')
+plt.xlabel('Time [sec]')
+plt.colorbar(label='Power [dB]')
+plt.show()
