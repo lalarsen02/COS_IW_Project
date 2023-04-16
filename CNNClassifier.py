@@ -19,16 +19,24 @@ print(str(device))
 
 ## Hyperparameters
 num_epochs = 10
-num_classes = 4  # there are 4 drums: kick, snare, cymbals, and toms
+labels = ['Kick', 'Snare', 'Cymbals', 'Toms']
+num_classes = len(labels)  # use the number of labels
 batch_size = 128
+
+# Create a dictionary to map each label to a unique integer
+label_map = {label: i for i, label in enumerate(labels)}
+
+## Importing Testing and Training Datasets
+training_X, training_y, testing_X, testing_y = createSpectrograms.create_spectrograms()
+
+# Convert the string labels to integers using the label map
+training_y = [label_map[label] for label in training_y]
+testing_y = [label_map[label] for label in testing_y]
 
 ## Fixing Random Seed for Reproducibility
 torch.manual_seed(0)
 np.random.seed(0)
 random.seed(0)
-
-## Importing Testing and Training Datasets
-training_X, training_y, testing_X, testing_y = createSpectrograms.create_spectrograms()
 
 class ImageDataset(Dataset):
     def __init__(self, file_paths, labels, transform=None):
@@ -43,7 +51,7 @@ class ImageDataset(Dataset):
             image = Image.open(f)
             if self.transform is not None:
                 image = self.transform(image)
-        return image, label
+        return image, torch.tensor(label)
 
     def __len__(self):
         return len(self.file_paths)
@@ -84,66 +92,53 @@ class ConvNet(nn.Module):
         return x
     
 class Trainer():
-    def __init__(self,net=None,optim=None,loss_function=None, train_loader=None):
+    def __init__(self,net=None,optim=None,loss_function=None, train_loader=None, accumulation_steps=1):
         self.net = net
         self.optim = optim
         self.loss_function = loss_function
         self.train_loader = train_loader
+        self.accumulation_steps = accumulation_steps
 
     def train(self,epochs):
         losses = []
         for epoch in range(epochs):
             epoch_loss = 0.0
             epoch_steps = 0
-            for data in self.train_loader:
+            accumulated_loss = 0.0
 
-                # Note that X has shape (batch_size, number of channels, height, width)
-                # which is equal to (128,1,__,__) since our default batch_size = 128 and 
-                # the image has only 1 channel
-                X = data[0]
-                print(X.shape)
-                y = data[1]
-                
-                # ACT11-Zero the gradient in the optimizer i.e. self.optim
-                ################
+            for i, data in enumerate(self.train_loader):
+                X = data[0].to(device)
+                y = data[1].to(device)
+
                 self.optim.zero_grad()
-                ################
-
-                # ACT12-Getting the output of the Network
-                ################
                 output = self.net(X)
-                ################
-
-                # ACT13-Computing loss using loss function i.e. self.loss_function
-                ################
                 loss = self.loss_function(output,y)
-                ################
 
-                # ACT14-Backpropagate to compute gradients of parameteres
-                ################
-                loss.backward()
-                ################
-
-                # ACT15-Call the optimizer i.e. self.optim
-                ################
-                self.optim.step()
-                ################
-
+                accumulated_loss += loss
                 epoch_loss += loss.item()
                 epoch_steps += 1
+
+                if (i + 1) % self.accumulation_steps == 0:
+                    accumulated_loss /= self.accumulation_steps
+                    accumulated_loss.backward()
+                    self.optim.step()
+                    accumulated_loss = 0.0
+
             # average loss of epoch
             losses.append(epoch_loss / epoch_steps)
             print("epoch [%d]: loss %.3f" % (epoch+1, losses[-1]))
+
         return losses
+
     
-learning_rate = 0.05
+learning_rate = 0.01
 
 net = ConvNet()
 net = net.to(device)
 opt = optim.SGD(net.parameters(), lr=learning_rate, momentum=0.9)
 loss_function = nn.CrossEntropyLoss()
 
-trainer = Trainer(net=net, optim=opt, loss_function=loss_function, train_loader=train_loader)
+trainer = Trainer(net=net, optim=opt, loss_function=loss_function, train_loader=train_loader, accumulation_steps=4)
 
 losses = trainer.train(num_epochs)
 ###ASSERTS
