@@ -21,7 +21,7 @@ print(str(device))
 num_epochs = 10
 labels = ['Kick', 'Snare', 'Cymbals', 'Toms']
 num_classes = len(labels)  # use the number of labels
-batch_size = 128
+batch_size = 32
 
 # Create a dictionary to map each label to a unique integer
 label_map = {label: i for i, label in enumerate(labels)}

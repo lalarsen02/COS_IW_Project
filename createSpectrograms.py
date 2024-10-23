@@ -65,7 +65,7 @@ def create_spectrograms():
                 # call your function on the file
                 mel_spec_db, sample_rate = create_spectrogram(file_path)
 
-                plt.figure(figsize=(10, 4))
+                plt.figure(figsize=(1, .4))
                 librosa.display.specshow(mel_spec_db, cmap='inferno', sr=sample_rate, fmax=sample_rate / 2.0)
 
                 rng = np.random.default_rng()
