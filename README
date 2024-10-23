@@ -5,15 +5,7 @@ Advised by Brian Kernighan
 
 ## Abstract
 
-Music is a universal language, and people can easily decipher between many different
-types of instruments. While recent developments in machine learning have allowed computers to
-distinguish between multiple types of instruments, trying to classify instruments with similar
-timbral features remains a significant problem. Therefore, this paper implements a
-Convolutional Neural Network (CNN) to classify drum set sub-instruments, like kick drums,
-snare drums, tom drums, and cymbals. These instruments were chosen because although they are
-different in character, they share many timbral qualities. Overall, the CNN scored a testing
-accuracy of around 94% when distinguishing these four sounds, proving that a CNN is a viable
-algorithm for classifying instruments with similar timbral features
+Music is a universal language, and people can easily decipher between many different types of instruments. While recent developments in machine learning have allowed computers to distinguish between multiple types of instruments, trying to classify instruments with similar timbral features remains a significant problem. Therefore, this paper implements a Convolutional Neural Network (CNN) to classify drum set sub-instruments, like kick drums, snare drums, tom drums, and cymbals. These instruments were chosen because although they are different in character, they share many timbral qualities. Overall, the CNN scored a testing accuracy of around 94% when distinguishing these four sounds, proving that a CNN is a viable algorithm for classifying instruments with similar timbral features
 
 ## Links
 
