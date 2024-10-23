@@ -1,7 +1,8 @@
 # The Development of a Convolutional Neural Network for the Classification of Drum Sounds
 
-This repository contains the code for the implementation of my Junior Independent Work.
-Advised by Brian Kernighan
+### Junior Independent Work | Advised by Brian Kernighan
+
+This repository contains the code for the implementation of my Junior Independent Work, where I designed and implemented a Convolutional Neural Network (CNN) to classify various drum sounds.
 
 ## Abstract
 
