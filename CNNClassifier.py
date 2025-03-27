@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+
+# ----------------------------------------------
+# Research Assignment for my COS IW
+# ----------------------------------------------
+
 import createSpectrograms
 import random
 import numpy as np 
@@ -10,6 +16,8 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from PIL import Image
 from torchviz import make_dot
+
+# ----------------------------------------------
 
 # Set the device to use
 # CUDA refers to the GPU
@@ -67,10 +75,11 @@ trans = transforms.Compose([
 train_dataset = ImageDataset(training_X, training_y, transform=trans)
 test_dataset = ImageDataset(testing_X, testing_y, transform=trans)
 
-# train_loader returns batches of training data. See how train_loader is used in the Trainer class later
+# train_loader returns batches of training data
 train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True,num_workers=0)
 test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False,num_workers=0)
 
+# CNN Model
 class ConvNet(nn.Module):
     def __init__(self):
         super(ConvNet, self).__init__()
@@ -91,6 +100,7 @@ class ConvNet(nn.Module):
         x = self.fc2(x)
         return x
     
+# class for training the Neural Network
 class Trainer():
     def __init__(self,net=None,optim=None,loss_function=None, train_loader=None, accumulation_steps=1):
         self.net = net
@@ -106,6 +116,7 @@ class Trainer():
             epoch_steps = 0
             accumulated_loss = 0.0
 
+            # learns from data
             for i, data in enumerate(self.train_loader):
                 X = data[0].to(device)
                 y = data[1].to(device)
@@ -130,7 +141,7 @@ class Trainer():
 
         return losses
 
-    
+# variables to set up machine learning
 learning_rate = 0.01
 
 net = ConvNet()
@@ -141,6 +152,7 @@ loss_function = nn.CrossEntropyLoss()
 trainer = Trainer(net=net, optim=opt, loss_function=loss_function, train_loader=train_loader, accumulation_steps=4)
 
 losses = trainer.train(num_epochs)
+
 ###ASSERTS
 assert(losses[-1] < 0.03)
-assert(len(losses)==num_epochs)  # because you record the loss after each epoch
+assert(len(losses)==num_epochs)

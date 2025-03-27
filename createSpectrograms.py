@@ -23,7 +23,7 @@ def stereoToMono(data_stereo):
 
     return mono
 
-# First, turns wav forms into mel spectrograms
+# first, turns wav forms into mel spectrograms
 def create_spectrogram(wav_file_path):
 
     sample_rate, samples = wavfile.read(wav_file_path)
@@ -47,14 +47,15 @@ def create_spectrogram(wav_file_path):
 
     return mel_spec_db, sample_rate
 
+# helper function to create all spectrogram images
 def create_spectrograms():
     training_X = []
     training_y = []
     testing_X = []
     testing_y = []
 
+    # go through each file in samples folder
     base_path = 'Samples'
-
     for folder in os.listdir(base_path):
         folder_path = os.path.join(base_path, folder)
         for file in os.listdir(folder_path):
@@ -71,6 +72,7 @@ def create_spectrograms():
                 rng = np.random.default_rng()
                 rfloat = rng.random()
 
+                # if random number is less than 0.8, the file is saved in the training folder
                 if rfloat < 0.8:
                     file = file[:-4]
                     pic_path = os.path.join('Training', file)
@@ -79,6 +81,7 @@ def create_spectrograms():
                     training_X.append(pic_path)
                     training_y.append(folder)
 
+                # else it is saved in the testing folder
                 else:
                     file = file[:-4]
                     pic_path = os.path.join('Testing', file)
